@@ -29,6 +29,30 @@ export class Commuter implements AfterViewInit, OnDestroy {
   userName: string | null = null;
   customUsername: string = '';
   showSettings = false;
+  
+  accountDropdownOpen = false;
+toggleAccountDropdown() {
+  this.accountDropdownOpen = !this.accountDropdownOpen;
+}
+
+showChat = false;
+chatMessages: string[] = [];
+chatText = "";
+
+
+
+sendChat() {
+  if (this.chatText.trim() === "") return;
+  this.chatMessages.push(this.chatText);
+  this.chatText = "";
+}
+
+showChatDashboard = false;
+
+toggleChat() {
+  this.showChatDashboard = !this.showChatDashboard;
+}
+
 
   // Dashboard static fields
   route = 'Route 5: Downtown to Uptown';
@@ -407,3 +431,5 @@ export class Commuter implements AfterViewInit, OnDestroy {
   const map = (window as any).leafletMapRef;
   if (map) map.closePopup();
 };
+
+
