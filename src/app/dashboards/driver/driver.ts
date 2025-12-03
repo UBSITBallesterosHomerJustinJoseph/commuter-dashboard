@@ -37,6 +37,28 @@ export class Driver implements OnDestroy {
 
   routeId: string = 'Aurora Hill';
 
+
+// logout
+// Add in your Driver class
+dropdownOpen = false;
+driverCommunityOpen = false;
+
+toggleDropdown() {
+  this.dropdownOpen = !this.dropdownOpen;
+}
+
+toggleDriverCommunity() {
+  this.driverCommunityOpen = !this.driverCommunityOpen;
+}
+
+logout() {
+  this.auth.signOut().then(() => {
+    window.location.href = '/login';
+  });
+}
+
+
+
   // driver-only community
   driverNewPostText = '';
   driverCommunityPosts: any[] = [];

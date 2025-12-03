@@ -1,27 +1,52 @@
-<div class="container">
-  <h1>Driver App</h1>
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <div class="driver-header-horizontal">
+    <div class="logo-circle"></div>
+    <h4 class="app-title">Driver App</h4>
+  </div>
+</div>
+  <div class="top-bar-right">
+    <!-- Community / Chat toggle -->
+    <button class="chat-btn" (click)="toggleDriverCommunity()">Community</button>
 
-  <button (click)="toggleOnline()" [class.active]="isOnline">
-    {{ isOnline ? '🔴 STOP SHARING' : '🟢 START SHARING' }}
-  </button>
-
-  <p>Status: <strong>{{ isOnline ? 'ONLINE' : 'OFFLINE' }}</strong></p>
+    <!-- Account dropdown -->
+    <div class="account-dropdown" [class.open]="dropdownOpen">
+      <button class="account-btn" (click)="toggleDropdown()">
+        {{ driverName || 'Driver' }}
+      </button>
+      <ul class="dropdown-menu">
+        <li><button (click)="logout()">🚪Logout</button></li>
+      </ul>
+    </div>
+  </div>
 </div>
 
-<div class="community">
-  <h4>Driver Community</h4>
-
-  <div class="community-input">
-    <textarea [(ngModel)]="driverNewPostText"
-              placeholder="Share an update…"
-              class="form-control"></textarea>
-    <button class="post-btn w-100 mt-2" (click)="sendDriverPost()">Post</button>
+<!-- MAIN CONTENT -->
+<div class="main-content-wrapper">
+  <div class="main-content">
+    <button class="toggle-tools-btn center-btn" (click)="toggleOnline()">
+      {{ isOnline ? '🔴 STOP SHARING' : '🟢 START SHARING' }}
+    </button>
+    <p>Status: <strong>{{ isOnline ? 'ONLINE' : 'OFFLINE' }}</strong></p>
   </div>
+</div>
 
-  <ul class="mt-3">
-    <li *ngFor="let post of driverCommunityPosts">
-      <strong>{{ post.user || 'Driver' }}</strong>: {{ post.text }}
-      <span class="time">{{ post.timeDisplay }}</span>
-    </li>
-  </ul>
+<!-- DRIVER COMMUNITY SLIDING PANEL -->
+<div class="right-dashboard" [class.show]="driverCommunityOpen">
+  <div class="community">
+    <h4>Driver Community</h4>
+    <div class="community-input">
+      <textarea [(ngModel)]="driverNewPostText"
+                placeholder="Share an update…"
+                class="form-control"></textarea>
+      <button class="post-btn w-100 mt-2" (click)="sendDriverPost()">Post</button>
+    </div>
+    <ul class="mt-3">
+      <li *ngFor="let post of driverCommunityPosts">
+        <strong>{{ post.user || 'Driver' }}</strong>: {{ post.text }}
+        <span class="time">{{ post.timeDisplay }}</span>
+      </li>
+    </ul>
+  </div>
 </div>

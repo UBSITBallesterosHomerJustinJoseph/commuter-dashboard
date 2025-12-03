@@ -1,26 +1,201 @@
-.container {
+/* ==================== TOP BAR ==================== */
+.top-bar {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 80px;
+  background: #fff;
+  border-bottom: 2px solid #FF4500;
+  padding: 0.5rem 1rem;     /* SAME AS COMMUTER */
   font-family: Arial, sans-serif;
+  position: sticky;
+  top: 0;
+  height: 60px;             /* FORCE SAME HEIGHT */
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-button {
-  padding: 20px 40px;
-  border-radius: 12px;
+.top-bar-left {
+  display: flex;
+  align-items: center;
+}
+
+.top-bar-left .app-title {
+  color: #FF4500;
+  font-weight:500;
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chat-btn, .toggle-tools-btn, .center-btn {
+  background-color: #FF4500;
+  color: #fff;
+  border-radius: 50px;
   border: none;
-  font-size: 22px;
+  padding: 6px 14px;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.25s;
+  transition: 0.2s;
+}
+.chat-btn:hover, .toggle-tools-btn:hover, .center-btn:hover {
+  background-color: #e65c00;
 }
 
-button.active {
-  background: red;
-  color: white;
+/* Account dropdown */
+.account-dropdown { position: relative; display: inline-block; }
+.account-btn {
+  background-color: white;
+  color: #FF4500;
+  border: 1px solid #FF4500;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.account-btn:hover { background-color: #FF4500; color: white; }
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: white;
+  border: 1px solid #FF4500;
+  border-radius: 6px;
+  margin-top: 4px;
+  min-width: 120px;
+  z-index: 6000;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.dropdown-menu li { list-style: none; }
+.dropdown-menu button {
+  background: none;
+  border: none;
+  color: #FF4500;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.dropdown-menu button:hover { background-color: #FF4500; color: white; }
+.account-dropdown.open .dropdown-menu { display: block; }
+
+/* ==================== MAIN CONTENT ==================== */
+.main-content-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 60px);
 }
 
-button:not(.active) {
-  background: green;
+.main-content {
+  text-align: center;
+}
+
+.center-btn {
+  font-size: 1.2rem;
+  padding: 12px 20px;
+}
+
+/* ==================== DRIVER COMMUNITY PANEL ==================== */
+.right-dashboard {
+  width: 320px;
+  background: #fff;
+  border-left: 3px solid #FF4500;
+  padding: 1rem;
+  overflow-y: auto;
+  position: fixed;
+  top: 73px;
+  right: -340px;
+  height: calc(100vh - 60px);
+  transition: right 0.3s ease;
+  z-index: 1500;
+}
+.right-dashboard.show { right: 0; }
+
+.community { background: #fff; padding: 1rem; }
+.community-input textarea { width: 100%; border: 2px solid #FF4500; border-radius: 10px; padding: 0.5rem; }
+.post-btn { background-color: #FF4500; color: #fff; border-radius: 50px; border: 2px solid #FF4500; font-weight: 600; width: 100%; }
+.post-btn:hover { background-color: #e65c00; }
+
+.community ul {
+  margin-top: 1rem;
+  padding-left: 0;
+  list-style: none;
+}
+.community li {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #ffd6b3;
+  padding: 4px 0;
+}
+.community li .time {
+  display: block;
+  font-size: 0.8rem;
+  color: #999;
+}
+
+/* ==================== MOBILE ==================== */
+@media screen and (max-width: 680px) {
+  .right-dashboard { width: 90%; right: -95%; }
+  .right-dashboard.show { right: 0; }
+  .center-btn { font-size: 1rem; padding: 10px 16px; }
+}
+
+
+/* ==================== DRIVER HEADER (Logo like login) ==================== */
+.logo-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid #FF4500;
+  background: #fff url('../../../assets/logo.png') no-repeat center center;
+  background-size: 70%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: transform 0.3s;
+}
+
+.logo-circle:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 576px) {
+  .logo-circle {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* ==================== DRIVER HEADER HORIZONTAL ==================== */
+.driver-header-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0 1rem;   /* CHANGED — removed top margin to lift logo up */
+  justify-content: flex-start;
+}
+
+
+
+/* Centered start sharing button */
+.center-btn {
+  margin-top: 0.5rem;
+  width: 200px;
+  padding: 10px 0;
+  font-size: 1rem;
+  border-radius: 25px;
+  background-color: #FF4500;
   color: white;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.center-btn:hover {
+  background-color: #e65c00;
+  transform: translateY(-1px);
 }
