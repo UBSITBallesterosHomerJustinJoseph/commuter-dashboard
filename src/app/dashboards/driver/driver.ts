@@ -95,7 +95,7 @@ logout() {
 
   // ===== location sharing =====
   startLocationUpdates() {
-    this.intervalId = setInterval(() => this.sendLocationOnce(), 5000);
+    this.intervalId = setInterval(() => this.sendLocationOnce(), 2000);
     this.sendLocationOnce();
   }
 
