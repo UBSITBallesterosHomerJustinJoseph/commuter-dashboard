@@ -120,7 +120,7 @@ toggleChat() {
   logout() {
     signOut(this.auth).then(() => {
       alert('Logged out successfully!');
-      window.location.href = '../../auth/login';
+      window.location.href = '../../auth/login/login.html';
     });
   }
 
