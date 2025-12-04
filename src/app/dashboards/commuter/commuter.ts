@@ -15,11 +15,12 @@ import {
 
 import { Auth, onAuthStateChanged, signOut } from '@angular/fire/auth';
 import { Subscription } from 'rxjs';
-
+import { RouterLink, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-commuter-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,RouterModule,RouterLink],
   templateUrl: './commuter.html',
   styleUrls: ['./commuter.css']
 })
@@ -46,6 +47,7 @@ sendChat() {
   this.chatMessages.push(this.chatText);
   this.chatText = "";
 }
+
 
 showChatDashboard = false;
 
@@ -86,7 +88,8 @@ toggleChat() {
   jeepSub: Subscription | null = null;
   communitySub: Subscription | null = null;
 
-  constructor(private firestore: Firestore, private auth: Auth) {
+  constructor(private firestore: Firestore, private auth: Auth, private router: Router) {
+
 
     // Read logged-in user
     onAuthStateChanged(this.auth, (user) => {
@@ -117,10 +120,10 @@ toggleChat() {
   openSettings() { this.showSettings = true; }
   closeSettings() { this.showSettings = false; }
 
-  // //logout() {
+  // logout() {
   //   signOut(this.auth).then(() => {
   //     alert('Logged out successfully!');
-  //     window.location.href = '../../auth/login/login.html';
+  //     window.location.href = '/login';
   //   });
   // }
 logout() {
@@ -128,7 +131,7 @@ logout() {
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
   });}
-}
+
   // ===== Lifecycle =====
   ngAfterViewInit() {
     this.initMap();
