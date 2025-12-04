@@ -210,6 +210,10 @@
   font-weight: 600;
   color: #111827;
 }
+.nearest-jeep-highlight {
+  filter: drop-shadow(0 0 10px yellow) drop-shadow(0 0 14px orange);
+  transition: filter 0.2s ease-in-out;
+}
 
 .gm-bottom-sub {
   font-size: 12px;

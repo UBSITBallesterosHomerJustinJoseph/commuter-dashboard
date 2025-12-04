@@ -73,9 +73,8 @@ export class Commuter implements AfterViewInit, OnDestroy {
   private jeepIcon: L.Icon;
 
   // nearest
-  nearestJeep: any = null;
-  nearestDistanceMeters = 0;
-  nearestEtaMinutes = 0;
+ nearestJeepneys: any[] = [];
+
 
   // Community
   newPostText = '';
@@ -308,56 +307,69 @@ export class Commuter implements AfterViewInit, OnDestroy {
   }
 
   // ===== Nearest jeep =====
-  private evaluateNearest() {
-    if (!this.marker) return;
+ private evaluateNearest() {
+  if (!this.marker) return;
 
-    const center = this.marker.getLatLng();
-    let best: any = null;
-    let bestDist = Infinity;
+  const center = this.marker.getLatLng();
+  const results: any[] = [];
 
-    this.jeepMarkers.forEach((m, id) => {
-      const marker = m as any;
-      const p = marker.getLatLng();
-      const d = this.distanceMeters(
-        { lat: center.lat, lng: center.lng },
-        { lat: p.lat, lng: p.lng }
-      );
-      if (d < bestDist) {
-        bestDist = d;
-        const data = marker.jeepData || {};
-        best = {
-          id,
-          plate: data.plate || '—',
-          lat: p.lat,
-          lng: p.lng,
-          marker: m
-        };
-      }
-    });
+  this.jeepMarkers.forEach((m, id) => {
+    const jeepMarker = m as any;
+    const p = jeepMarker.getLatLng();
+    const data = jeepMarker.jeepData || {};
 
-    if (!best) {
-      this.nearestJeep = null;
-      this.nearestDistanceMeters = 0;
-      this.nearestEtaMinutes = 0;
-      return;
-    }
+    const dist = this.distanceMeters(
+      { lat: center.lat, lng: center.lng },
+      { lat: p.lat, lng: p.lng }
+    );
 
     const avgSpeedMps = (20 * 1000) / 3600;
-    const etaMin = (bestDist / avgSpeedMps) / 60;
+    const etaMin = Math.ceil((dist / avgSpeedMps) / 60);
 
-    this.nearestJeep = best;
-    this.nearestDistanceMeters = Math.round(bestDist);
-    this.nearestEtaMinutes = Math.ceil(etaMin);
-
-    this.highlightNearestMarker(best.id);
-  }
-
-  private highlightNearestMarker(id: string) {
-    this.jeepMarkers.forEach((m, key) => {
-      m.setOpacity(key === id ? 1 : 0.5);
-      if (key === id) m.openPopup();
+    results.push({
+      id,
+      plate: data.plate || '—',
+      lat: p.lat,
+      lng: p.lng,
+      distance: Math.round(dist),
+      eta: etaMin,
+      marker: jeepMarker
     });
+  });
+
+  // Sort by distance
+  results.sort((a, b) => a.distance - b.distance);
+
+  // Get top 3 nearest
+  this.nearestJeepneys = results.slice(0, 3);
+
+  // Highlight only the nearest
+  if (this.nearestJeepneys.length > 0) {
+    this.highlightNearestMarker(this.nearestJeepneys[0].id);
   }
+}
+
+
+private highlightNearestMarker(id: string) {
+  this.jeepMarkers.forEach((m, key) => {
+    const el = m.getElement() as HTMLElement;
+
+    if (!el) return;
+
+    if (key === id) {
+      m.setOpacity(1);
+
+      // Highlight glow for nearest jeep
+      el.classList.add('nearest-jeep-highlight');
+    } else {
+      m.setOpacity(0.5);
+      el.classList.remove('nearest-jeep-highlight');
+    }
+  });
+}
+
+
+
 
   // ===== Community =====
   private loadCommunityRealtime() {
