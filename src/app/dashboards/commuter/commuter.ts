@@ -32,10 +32,16 @@ export class Commuter implements AfterViewInit, OnDestroy {
   customUsername: string = '';
   showSettings = false;
 
-  accountDropdownOpen = false;
-  toggleAccountDropdown() {
-    this.accountDropdownOpen = !this.accountDropdownOpen;
-  }
+accountDropdownOpen = false;
+
+toggleAccountDropdown() {
+  this.accountDropdownOpen = !this.accountDropdownOpen;
+}
+
+closeAccountDropdown() {
+  this.accountDropdownOpen = false;
+}
+
 
   // Chat
   showChatDashboard = false;
@@ -120,7 +126,10 @@ export class Commuter implements AfterViewInit, OnDestroy {
   }
 
   // ===== Settings modal actions =====
-  openSettings() { this.showSettings = true; }
+openSettings() {
+  this.closeAccountDropdown();
+  this.showSettings = true;
+}
   closeSettings() { this.showSettings = false; }
 
   logout() {
@@ -155,15 +164,7 @@ export class Commuter implements AfterViewInit, OnDestroy {
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
 
-    // Zoom controls (bottom-left like Google Maps)
-    L.control.zoom({
-      position: 'bottomleft'
-    }).addTo(this.map);
-
-    // Geocoder
-    // @ts-ignore
-
-
+   
     const center = this.map.getCenter();
     this.createMarkerAndCircle(center.lat, center.lng, this.radius);
 
@@ -235,12 +236,6 @@ export class Commuter implements AfterViewInit, OnDestroy {
     if (!this.marker || !this.circle) return;
     const p = this.marker.getLatLng();
     const r = this.circle.getRadius();
-    this.marker.bindPopup(`
-      <b>Marker info</b><br>
-      Lat: ${p.lat.toFixed(6)}<br>
-      Lng: ${p.lng.toFixed(6)}<br>
-      Radius: ${Math.round(r)} m
-    `).openPopup();
   }
 
   // ===== Jeepney realtime =====

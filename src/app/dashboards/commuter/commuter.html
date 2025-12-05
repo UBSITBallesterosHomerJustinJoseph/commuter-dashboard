@@ -2,10 +2,11 @@
   <!-- PHONE FRAME WITH MAP -->
   <div class="phone-frame">
     <!-- Phone image -->
-    <img
-      src="https://tse3.mm.bing.net/th/id/OIP.tz5i2imQdcxz-cAtwIGASgHaLN?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3.png"
-      alt="iPhone frame"
-      class="phone-image" />
+<img src="assets/iphone-frame.png"
+     alt="iPhone frame"
+     class="phone-image" />
+
+
 
     <!-- Screen window positioned over the image -->
     <div class="phone-screen">
@@ -53,17 +54,24 @@
             </button>
           </div>
 
-          <!-- BOTTOM INFO BAR (nearest jeepney) -->
+          <!-- BOTTOM INFO BAR (Top 3 nearest jeepneys) -->
           <div class="gm-bottom-bar" *ngIf="nearestJeepneys.length">
             <div class="gm-bottom-main">
               <div class="gm-bottom-title">Top 3 Nearest Jeepneys</div>
 
-              <div class="gm-bottom-sub" *ngFor="let j of nearestJeepneys; let i = index">
-                <strong>#{{ i + 1 }}</strong> — 
-                Plate {{ j.plate }} • {{ j.distance }} m • {{ j.eta }} min • Passengers: {{ j.passengerCount || 0 }} / {{ j.capacity || 'N/A' }}
+              <div class="gm-bottom-list">
+                <div
+                  class="gm-bottom-sub"
+                  *ngFor="let j of nearestJeepneys; let i = index">
+                  <strong>#{{ i + 1 }}</strong> —
+                  Plate {{ j.plate }} • {{ j.distance }} m • {{ j.eta }} min •
+                  Passengers: {{ j.passengerCount || 0 }} /
+                  {{ j.capacity || 'N/A' }}
+                </div>
               </div>
             </div>
           </div>
+          <!-- END BOTTOM BAR -->
         </div>
       </div>
     </div>
@@ -78,20 +86,26 @@
 
     <div class="control-row">
       <label for="radiusRange">Radius (m)</label>
-      <input id="radiusRange"
-             type="range"
-             min="50" max="5000" step="10"
-             [(ngModel)]="radius"
-             (input)="updateRadiusFromUI()" />
+      <input
+        id="radiusRange"
+        type="range"
+        min="50"
+        max="5000"
+        step="10"
+        [(ngModel)]="radius"
+        (input)="updateRadiusFromUI()" />
     </div>
 
     <div class="control-row">
-      <input id="radiusNumber"
-             type="number"
-             min="50" max="5000" step="10"
-             [(ngModel)]="radius"
-             (change)="updateRadiusFromUI()"
-             style="flex:1; padding:6px;" />
+      <input
+        id="radiusNumber"
+        type="number"
+        min="50"
+        max="5000"
+        step="10"
+        [(ngModel)]="radius"
+        (change)="updateRadiusFromUI()"
+        style="flex: 1; padding: 6px;" />
       <button class="btn" (click)="fitToCircle()">Fit</button>
     </div>
 
@@ -108,9 +122,10 @@
       <h4>Community</h4>
 
       <div class="community-input">
-        <textarea [(ngModel)]="newPostText"
-                  placeholder="Share an update…"
-                  class="form-control"></textarea>
+        <textarea
+          [(ngModel)]="newPostText"
+          placeholder="Share an update…"
+          class="form-control"></textarea>
         <button class="post-btn w-100 mt-2" (click)="sendPost()">Post</button>
       </div>
 
@@ -121,8 +136,7 @@
         </li>
       </ul>
 
-      <hr>
-
+      <hr />
 
       <ul class="mt-3 chat-list">
         <li *ngFor="let msg of chatMessages">
@@ -133,16 +147,16 @@
   </aside>
 
   <!-- SETTINGS MODAL -->
-
   <div class="modal" *ngIf="showSettings">
     <div class="modal-content">
       <h3>Account Settings</h3>
 
       <label><strong>Username:</strong></label>
-      <input type="text"
-             [(ngModel)]="customUsername"
-             class="form-control"
-             placeholder="Enter username">
+      <input
+        type="text"
+        [(ngModel)]="customUsername"
+        class="form-control"
+        placeholder="Enter username" />
 
       <button class="btn mt-2" (click)="saveUsername()">Save</button>
       <button class="btn mt-3" (click)="closeSettings()">Close</button>
