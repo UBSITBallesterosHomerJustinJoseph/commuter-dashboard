@@ -42,9 +42,10 @@
 
           <!-- CATEGORY CHIPS UNDER NAV -->
           <div class="gm-chip-row">
-            <button class="gm-chip">Jeepneys</button>
-            <button class="gm-chip">Stops</button>
-            <button class="gm-chip">Traffic</button>
+            <button class="gm-chip" (click)="focusNearestJeepney()">Jeepneys</button>
+            <button class="gm-chip" (click)="focusStop()">Stops</button>
+            <button class="gm-chip" (click)="focusTerminal()">Terminal</button>
+
           </div>
 
           <!-- RIGHT CONTROLS (e.g., locate me) -->
@@ -78,50 +79,57 @@
   </div>
 
   <!-- TOOLS PANEL (SLIDE FROM LEFT) -->
-  <aside class="map-sidebar" [class.visible]="showTools">
-    <div class="sidebar-header">
-      <strong>Interactive Map Tool</strong>
+<aside class="map-sidebar" [class.visible]="showTools">
+  <div class="sidebar-header">
+    <strong>Interactive Map Tool</strong>
+
+    <div class="sidebar-header-actions">
       <button class="btn small" (click)="locateMe()">📍 My location</button>
+      <button class="sidebar-close" (click)="showTools = false">✕</button>
     </div>
+  </div>
 
-    <div class="control-row">
-      <label for="radiusRange">Radius (m)</label>
-      <input
-        id="radiusRange"
-        type="range"
-        min="50"
-        max="5000"
-        step="10"
-        [(ngModel)]="radius"
-        (input)="updateRadiusFromUI()" />
-    </div>
+  <div class="control-row">
+    <label for="radiusRange">Radius (m)</label>
+    <input
+      id="radiusRange"
+      type="range"
+      min="50"
+      max="5000"
+      step="10"
+      [(ngModel)]="radius"
+      (input)="updateRadiusFromUI()" />
+  </div>
 
-    <div class="control-row">
-      <input
-        id="radiusNumber"
-        type="number"
-        min="50"
-        max="5000"
-        step="10"
-        [(ngModel)]="radius"
-        (change)="updateRadiusFromUI()"
-        style="flex: 1; padding: 6px;" />
-      <button class="btn" (click)="fitToCircle()">Fit</button>
-    </div>
+  <div class="control-row">
+    <input
+      id="radiusNumber"
+      type="number"
+      min="50"
+      max="5000"
+      step="10"
+      [(ngModel)]="radius"
+      (change)="updateRadiusFromUI()"
+      style="flex: 1; padding: 6px;" />
+    <button class="btn" (click)="fitToCircle()">Fit</button>
+  </div>
 
-    <div class="coords">
-      <div>Radius: <span>{{ radius }}</span> m</div>
-    </div>
+  <div class="coords">
+    <div>Radius: <span>{{ radius }}</span> m</div>
+  </div>
 
-    <p class="small">Drag the marker to move the circle.</p>
-  </aside>
+  <p class="small">Drag the marker to move the circle.</p>
+</aside>
 
   <!-- CHAT / COMMUNITY SLIDE-OVER (RIGHT) -->
-  <aside class="right-dashboard" [class.show]="showChatDashboard">
-    <div class="community">
+<aside class="right-dashboard" [class.show]="showChatDashboard">
+  <div class="community">
+    <div class="community-header">
       <h4>Community</h4>
+      <button class="community-close" (click)="toggleChat()">✕</button>
+    </div>
 
-      <div class="community-input">
+    <div class="community-input">
         <textarea
           [(ngModel)]="newPostText"
           placeholder="Share an update…"

@@ -32,16 +32,15 @@ export class Commuter implements AfterViewInit, OnDestroy {
   customUsername: string = '';
   showSettings = false;
 
-accountDropdownOpen = false;
+  accountDropdownOpen = false;
 
-toggleAccountDropdown() {
-  this.accountDropdownOpen = !this.accountDropdownOpen;
-}
+  toggleAccountDropdown() {
+    this.accountDropdownOpen = !this.accountDropdownOpen;
+  }
 
-closeAccountDropdown() {
-  this.accountDropdownOpen = false;
-}
-
+  closeAccountDropdown() {
+    this.accountDropdownOpen = false;
+  }
 
   // Chat
   showChatDashboard = false;
@@ -58,7 +57,7 @@ closeAccountDropdown() {
     this.chatText = '';
   }
 
-  // Dashboard static fields (still available if you need them)
+  // Dashboard static fields
   route = 'Route 5: Downtown to Uptown';
   delay = '10 min';
   delayTime = '08:30 AM';
@@ -68,7 +67,7 @@ closeAccountDropdown() {
 
   // Map
   map!: L.Map;
-  marker: L.Marker | null = null;
+  marker: L.Marker | null = null;   // commuter marker
   circle: L.Circle | null = null;
   radius = 1500;
   lat = '—';
@@ -78,9 +77,34 @@ closeAccountDropdown() {
   private jeepMarkers = new Map<string, L.Marker>();
   private jeepIcon: L.Icon;
 
-  // nearest
- nearestJeepneys: any[] = [];
+  // User / commuter location icon
+  private userIcon: L.Icon = L.icon({
+    iconUrl: 'assets/location.png',   // put your commuter icon here
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    popupAnchor: [0, -36]
+  });
 
+  // Terminal (fixed)
+  private terminalMarker: L.Marker | null = null;
+  private terminalIcon: L.Icon = L.icon({
+    iconUrl: 'assets/jeep.png',
+    iconSize: [33, 36],
+    iconAnchor: [17, 34],
+    popupAnchor: [0, -30]
+  });
+
+  // Stop (fixed)
+  private stopMarker: L.Marker | null = null;
+  private stopIcon: L.Icon = L.icon({
+    iconUrl: 'assets/stop.png',
+    iconSize: [45, 45],
+    iconAnchor: [30, 30],
+    popupAnchor: [0, -28]
+  });
+
+  // nearest
+  nearestJeepneys: any[] = [];
 
   // Community
   newPostText = '';
@@ -118,19 +142,22 @@ closeAccountDropdown() {
 
     // Jeepney icon
     this.jeepIcon = L.icon({
-      iconUrl: 'jeepney.png',
-      iconSize: [36, 36],
+      iconUrl: 'assets/jterminal.png',
+      iconSize: [40, 40],
       iconAnchor: [18, 18],
       popupAnchor: [0, -12]
     });
   }
 
   // ===== Settings modal actions =====
-openSettings() {
-  this.closeAccountDropdown();
-  this.showSettings = true;
-}
-  closeSettings() { this.showSettings = false; }
+  openSettings() {
+    this.closeAccountDropdown();
+    this.showSettings = true;
+  }
+
+  closeSettings() {
+    this.showSettings = false;
+  }
 
   logout() {
     signOut(this.auth).then(() => {
@@ -149,7 +176,10 @@ openSettings() {
   ngOnDestroy() {
     this.jeepSub?.unsubscribe();
     this.communitySub?.unsubscribe();
-    try { this.map?.off(); this.map?.remove(); } catch {}
+    try {
+      this.map?.off();
+      this.map?.remove();
+    } catch {}
   }
 
   // ===== Map =====
@@ -164,7 +194,28 @@ openSettings() {
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
 
-   
+    // FIXED TERMINAL MARKER (non-draggable, cannot be altered)
+    const terminalLat = 16.427862459557634;
+    const terminalLng = 120.60728876037099;
+
+    this.terminalMarker = L.marker(
+      [terminalLat, terminalLng],
+      { icon: this.terminalIcon, draggable: false }
+    )
+      .addTo(this.map)
+      .bindPopup('<b>Terminal</b>');
+
+    // FIXED STOP MARKER
+    const stopLat = 16.41410551293782;
+    const stopLng = 120.59551046905928;
+
+    this.stopMarker = L.marker(
+      [stopLat, stopLng],
+      { icon: this.stopIcon, draggable: false }
+    )
+      .addTo(this.map)
+      .bindPopup('<b>Stop</b>');
+
     const center = this.map.getCenter();
     this.createMarkerAndCircle(center.lat, center.lng, this.radius);
 
@@ -174,11 +225,26 @@ openSettings() {
     });
   }
 
+  focusStop() {
+    if (!this.map || !this.stopMarker) return;
+    const p = this.stopMarker.getLatLng();
+    this.map.flyTo([p.lat, p.lng], this.map.getZoom(), {
+      animate: true,
+      duration: 1.0
+    });
+    this.stopMarker.openPopup();
+  }
+
   private createMarkerAndCircle(lat: number, lng: number, radius = 500) {
     if (this.marker) this.marker.remove();
     if (this.circle) this.circle.remove();
 
-    this.marker = L.marker([lat, lng], { draggable: true }).addTo(this.map);
+    // use custom commuter icon here
+    this.marker = L.marker(
+      [lat, lng],
+      { draggable: true, icon: this.userIcon }
+    ).addTo(this.map);
+
     this.circle = L.circle([lat, lng], { radius }).addTo(this.map);
 
     this.updateInfo(lat, lng, radius);
@@ -243,11 +309,10 @@ openSettings() {
     const col = collection(this.firestore, 'jeepneys');
     const q = query(col);
 
-    this.jeepSub = collectionData(q, { idField: 'id' })
-      .subscribe((items: any[]) => {
-        this.updateJeepMarkers(items || []);
-        this.evaluateNearest();
-      });
+    this.jeepSub = collectionData(q, { idField: 'id' }).subscribe((items: any[]) => {
+      this.updateJeepMarkers(items || []);
+      this.evaluateNearest();
+    });
   }
 
   private updateJeepMarkers(list: any[]) {
@@ -283,9 +348,9 @@ openSettings() {
   }
 
   private jeepPopupContent(j: any) {
-    const speed = j.speed? (j.speed * 3.6).toFixed(1) + ' km/h': '—';
-    const updated = j.updatedAt? new Date(j.updatedAt).toLocaleTimeString(): '—';
-    const passengers = j.passengerCount ?? 0; // fallback to 0
+    const speed = j.speed ? (j.speed * 3.6).toFixed(1) + ' km/h' : '—';
+    const updated = j.updatedAt ? new Date(j.updatedAt).toLocaleTimeString() : '—';
+    const passengers = j.passengerCount ?? 0;
     const capacity = j.capacity ?? 'N/A';
 
     return `
@@ -300,84 +365,103 @@ openSettings() {
   }
 
   // ===== Nearest jeep =====
- private evaluateNearest() {
-  if (!this.marker) return;
+  private evaluateNearest() {
+    if (!this.marker) return;
 
-  const center = this.marker.getLatLng();
-  const results: any[] = [];
+    const center = this.marker.getLatLng();
+    const results: any[] = [];
 
-  this.jeepMarkers.forEach((m, id) => {
-    const jeepMarker = m as any;
-    const p = jeepMarker.getLatLng();
-    const data = jeepMarker.jeepData || {};
+    this.jeepMarkers.forEach((m, id) => {
+      const jeepMarker = m as any;
+      const p = jeepMarker.getLatLng();
+      const data = jeepMarker.jeepData || {};
 
-    const dist = this.distanceMeters(
-      { lat: center.lat, lng: center.lng },
-      { lat: p.lat, lng: p.lng }
-    );
+      const dist = this.distanceMeters(
+        { lat: center.lat, lng: center.lng },
+        { lat: p.lat, lng: p.lng }
+      );
 
-    const avgSpeedMps = (20 * 1000) / 3600;
-    const etaMin = Math.ceil((dist / avgSpeedMps) / 60);
+      const avgSpeedMps = (20 * 1000) / 3600;
+      const etaMin = Math.ceil((dist / avgSpeedMps) / 60);
 
-    results.push({
-      id,
-      plate: data.plate || '—',
-      lat: p.lat,
-      lng: p.lng,
-      distance: Math.round(dist),
-      eta: etaMin,
-      passengerCount: data.passengerCount || 0, 
-      capacity: data.capacity,
-      marker: jeepMarker
+      results.push({
+        id,
+        plate: data.plate || '—',
+        lat: p.lat,
+        lng: p.lng,
+        distance: Math.round(dist),
+        eta: etaMin,
+        passengerCount: data.passengerCount || 0,
+        capacity: data.capacity,
+        marker: jeepMarker
+      });
     });
-  });
 
-  // Sort by distance
-  results.sort((a, b) => a.distance - b.distance);
+    results.sort((a, b) => a.distance - b.distance);
+    this.nearestJeepneys = results.slice(0, 3);
 
-  // Get top 3 nearest
-  this.nearestJeepneys = results.slice(0, 3);
-
-  // Highlight only the nearest
-  if (this.nearestJeepneys.length > 0) {
-    this.highlightNearestMarker(this.nearestJeepneys[0].id);
-  }
-}
-
-
-private highlightNearestMarker(id: string) {
-  this.jeepMarkers.forEach((m, key) => {
-    const el = m.getElement() as HTMLElement;
-
-    if (!el) return;
-
-    if (key === id) {
-      m.setOpacity(1);
-
-      // Highlight glow for nearest jeep
-      el.classList.add('nearest-jeep-highlight');
-    } else {
-      m.setOpacity(0.5);
-      el.classList.remove('nearest-jeep-highlight');
+    if (this.nearestJeepneys.length > 0) {
+      this.highlightNearestMarker(this.nearestJeepneys[0].id);
     }
-  });
-}
+  }
 
+  private highlightNearestMarker(id: string) {
+    this.jeepMarkers.forEach((m, key) => {
+      const el = m.getElement() as HTMLElement;
+      if (!el) return;
 
+      if (key === id) {
+        m.setOpacity(1);
+        el.classList.add('nearest-jeep-highlight');
+      } else {
+        m.setOpacity(0.5);
+        el.classList.remove('nearest-jeep-highlight');
+      }
+    });
+  }
 
+  /** Move camera to nearest jeepney without moving user marker */
+  focusNearestJeepney() {
+    if (!this.map || !this.nearestJeepneys || this.nearestJeepneys.length === 0) {
+      return;
+    }
+
+    const target = this.nearestJeepneys[0];
+    const lat = target.lat;
+    const lng = target.lng;
+
+    this.map.flyTo([lat, lng], this.map.getZoom(), {
+      animate: true,
+      duration: 1.0
+    });
+
+    if (target.marker && typeof target.marker.openPopup === 'function') {
+      target.marker.openPopup();
+    }
+  }
+
+  /** Focus on fixed terminal marker (does not move it or the user marker) */
+  focusTerminal() {
+    if (!this.map || !this.terminalMarker) return;
+    const p = this.terminalMarker.getLatLng();
+    this.map.flyTo([p.lat, p.lng], this.map.getZoom(), {
+      animate: true,
+      duration: 1.0
+    });
+    this.terminalMarker.openPopup();
+  }
 
   // ===== Community =====
   private loadCommunityRealtime() {
     const colRef = collection(this.firestore, 'community');
     const q = query(colRef, orderBy('time', 'desc'));
 
-    this.communitySub = collectionData(q, { idField: 'id' })
-      .subscribe((posts: any[]) => {
-        this.communityPosts = (posts || []).map(p => ({
-          ...p,
-          timeDisplay: p.time ? (new Date(p.time)).toLocaleString() : ''
-        }));
-      });
+    this.communitySub = collectionData(q, { idField: 'id' }).subscribe((posts: any[]) => {
+      this.communityPosts = (posts || []).map(p => ({
+        ...p,
+        timeDisplay: p.time ? new Date(p.time).toLocaleString() : ''
+      }));
+    });
   }
 
   async sendPost() {
@@ -405,9 +489,11 @@ private highlightNearestMarker(id: string) {
   }
 
   // ===== Distance helpers =====
-  private toRad(v: number) { return v * Math.PI / 180; }
+  private toRad(v: number) {
+    return v * Math.PI / 180;
+  }
 
-  private haversineKm(a: { lat: number, lng: number }, b: { lat: number, lng: number }) {
+  private haversineKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
     const R = 6371;
     const dLat = this.toRad(b.lat - a.lat);
     const dLon = this.toRad(b.lng - a.lng);
@@ -416,25 +502,27 @@ private highlightNearestMarker(id: string) {
 
     const sinDlat = Math.sin(dLat / 2);
     const sinDlon = Math.sin(dLon / 2);
-    const aa = sinDlat * sinDlat +
+    const aa =
+      sinDlat * sinDlat +
       Math.cos(lat1) * Math.cos(lat2) * sinDlon * sinDlon;
 
     return R * (2 * Math.atan2(Math.sqrt(aa), Math.sqrt(1 - aa)));
   }
 
-   private distanceMeters(a: { lat: number, lng: number }, b: { lat: number, lng: number }) {
+  private distanceMeters(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
     return this.haversineKm(a, b) * 1000;
   }
 
   // ===== Search bar (center pill) =====
   searchText = '';
 
-  // Simple geocoding using Nominatim (OpenStreetMap)
   async runSearch() {
     const q = (this.searchText || '').trim();
     if (!q) return;
 
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`;
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+      q
+    )}`;
 
     try {
       const res = await fetch(url);
@@ -456,7 +544,7 @@ private highlightNearestMarker(id: string) {
       alert('Search failed. Please try again.');
     }
   }
-}  // <== end of Commuter class
+} // end of Commuter class
 
 // Enable popup close button to work (if used)
 (window as any).closeLeafletPopup = () => {
