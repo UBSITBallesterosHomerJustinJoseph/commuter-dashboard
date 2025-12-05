@@ -42,6 +42,9 @@ export class Driver implements OnDestroy {
 // Add in your Driver class
 dropdownOpen = false;
 driverCommunityOpen = false;
+passengerCount = 0; 
+capacity: number | null = null; // <-- add this
+
 
 toggleDropdown() {
   this.dropdownOpen = !this.dropdownOpen;
@@ -76,6 +79,7 @@ logout() {
         if (snap.exists()) {
           const data: any = snap.data();
           this.plate = data.plate || null;
+          this.capacity = data.capacity || null;
         }
 
         console.log('loaded plate:', this.plate);
@@ -131,7 +135,9 @@ logout() {
           lng: longitude,
           updatedAt: now,
           speed: computedSpeed,
-          routeId: this.routeId
+          routeId: this.routeId,
+          passengerCount: this.passengerCount,
+          capacity: this.capacity
         },
         { merge: true }
       );

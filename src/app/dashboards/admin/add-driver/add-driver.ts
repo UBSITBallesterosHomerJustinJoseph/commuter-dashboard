@@ -19,6 +19,8 @@ export class AddDriver {
   license = '';
   plate = '';
   password = '';
+  capacity: number | null = null;
+
 
   constructor(
     private firestore: Firestore,
@@ -52,6 +54,7 @@ export class AddDriver {
         plate: this.plate,
         role: 'driver',     
         status: 'approved',
+        capacity: this.capacity,
         createdAt: new Date()
       });
 

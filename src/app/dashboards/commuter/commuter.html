@@ -60,7 +60,7 @@
 
               <div class="gm-bottom-sub" *ngFor="let j of nearestJeepneys; let i = index">
                 <strong>#{{ i + 1 }}</strong> — 
-                Plate {{ j.plate }} • {{ j.distance }} m • {{ j.eta }} min
+                Plate {{ j.plate }} • {{ j.distance }} m • {{ j.eta }} min • Passengers: {{ j.passengerCount || 0 }} / {{ j.capacity || 'N/A' }}
               </div>
             </div>
           </div>

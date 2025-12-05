@@ -267,11 +267,11 @@ export class Commuter implements AfterViewInit, OnDestroy {
       if (this.jeepMarkers.has(j.id)) {
         const m = this.jeepMarkers.get(j.id)! as any;
         m.setLatLng(latlng);
-        m.jeepData = j;
+        m.jeepData = { ...j };
         m.setPopupContent(this.jeepPopupContent(j));
       } else {
         const m = L.marker(latlng, { icon: this.jeepIcon }) as any;
-        m.jeepData = j;
+        m.jeepData = { ...j };
         m.bindPopup(this.jeepPopupContent(j));
         m.addTo(this.map);
         this.jeepMarkers.set(j.id, m);
@@ -288,19 +288,17 @@ export class Commuter implements AfterViewInit, OnDestroy {
   }
 
   private jeepPopupContent(j: any) {
-    const speed = j.speed
-      ? (j.speed * 3.6).toFixed(1) + ' km/h'
-      : '—';
-
-    const updated = j.updatedAt
-      ? new Date(j.updatedAt).toLocaleTimeString()
-      : '—';
+    const speed = j.speed? (j.speed * 3.6).toFixed(1) + ' km/h': '—';
+    const updated = j.updatedAt? new Date(j.updatedAt).toLocaleTimeString(): '—';
+    const passengers = j.passengerCount ?? 0; // fallback to 0
+    const capacity = j.capacity ?? 'N/A';
 
     return `
       <div class="jeep-popup">
         <div class="title">🛺 Jeepney ${j.plate || '—'}</div>
         <div><b>Route:</b> ${j.routeId || '—'}</div>
         <div><b>Speed:</b> ${speed}</div>
+        <div><b>Passengers:</b> ${passengers} / ${capacity}</div>
         <div><b>Last update:</b> ${updated}</div>
       </div>
     `;
@@ -333,6 +331,8 @@ export class Commuter implements AfterViewInit, OnDestroy {
       lng: p.lng,
       distance: Math.round(dist),
       eta: etaMin,
+      passengerCount: data.passengerCount || 0, 
+      capacity: data.capacity,
       marker: jeepMarker
     });
   });
