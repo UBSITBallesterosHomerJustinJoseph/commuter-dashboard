@@ -58,18 +58,19 @@
           <!-- BOTTOM INFO BAR (Top 3 nearest jeepneys) -->
           <div class="gm-bottom-bar" *ngIf="nearestJeepneys.length">
             <div class="gm-bottom-main">
-              <div class="gm-bottom-title">Top 3 Nearest Jeepneys</div>
+              <div class="gm-bottom-title">Nearest Jeepneys</div>
 
               <div class="gm-bottom-list">
-                <div
-                  class="gm-bottom-sub"
-                  *ngFor="let j of nearestJeepneys; let i = index">
-                  <strong>#{{ i + 1 }}</strong> —
-                  Plate {{ j.plate }} • {{ j.distance }} m • {{ j.eta }} min •
-                  Passengers: {{ j.passengerCount || 0 }} /
-                  {{ j.capacity || 'N/A' }}
-                </div>
-              </div>
+<div class="gm-bottom-list">
+  <div
+    class="gm-bottom-sub"
+    *ngFor="let j of nearestJeepneys">
+    <span class="jeep-bullet">•</span>
+    Plate {{ j.plate }} - {{ j.distance }} m - {{ j.eta }} min -
+    Passengers: {{ j.passengerCount || 0 }} /
+    {{ j.capacity || 'N/A' }}
+  </div>
+</div>
             </div>
           </div>
           <!-- END BOTTOM BAR -->
