@@ -1,13 +1,15 @@
-<div class="signup-background">
+<div class="signup-bg">
 
   <div class="signup-card">
 
-    <!-- Logo same style as login and signup-choice -->
+    <!-- Logo -->
     <div class="logo-placeholder mb-3"></div>
 
-    <h2 class="text-orange text-center mb-2">Commuter Signup</h2>
-    <p class="text-center mb-4">Create your commuter account</p>
+    <!-- Title and Subtitle -->
+    <h2 class="signup-title text-center">Commuter Signup</h2>
+    <p class="signup-subtitle text-center">Create your commuter account</p>
 
+    <!-- Full Name -->
     <input
       type="text"
       placeholder="Full Name"
@@ -16,6 +18,7 @@
       (input)="name.set($any($event.target).value)"
     >
 
+    <!-- Email -->
     <input
       type="email"
       placeholder="Email"
@@ -24,6 +27,7 @@
       (input)="email.set($any($event.target).value)"
     >
 
+    <!-- Password -->
     <input
       type="password"
       placeholder="Password"
@@ -32,7 +36,12 @@
       (input)="password.set($any($event.target).value)"
     >
 
-    <button class="btn-orange w-100" (click)="register()">
+    <!-- Gradient Button -->
+    <button
+      class="signup-btn w-100 mb-3"
+      (click)="register()"
+      type="button"
+    >
       Create Account
     </button>
 
