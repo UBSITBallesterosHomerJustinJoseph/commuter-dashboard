@@ -97,7 +97,7 @@
 /* === FLOATING TOP NAV BAR === */
 .gm-top-nav {
   position: absolute;
-  top: 8px;
+  top: 18px;   /* was 8px */
   left: 8px;
   right: 8px;
   display: flex;
@@ -185,7 +185,7 @@
 /* === CATEGORY CHIPS === */
 .gm-chip-row {
   position: absolute;
-  top: 54px;
+  top: 70px;   /* was 54px */
   left: 8px;
   right: 8px;
   display: flex;
@@ -232,9 +232,10 @@
   position: absolute;
   left: 8px;
   right: 8px;
-  bottom: 16px;
+  bottom: 32px;   /* was 16px */
   z-index: 1000;
 }
+
 
 .gm-bottom-main {
   display: flex;
